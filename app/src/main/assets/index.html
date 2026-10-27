@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Abfall Heusenstamm</title>
+<style>
+:root{
+  --bg:#F4F2EC; --card:#FFFFFF; --ink:#1F2430; --muted:#6B7080; --line:#E3E0D7;
+  --brand:#3F4F8C; --brand-ink:#FFFFFF; --warn:#B4532A; --ok:#2E7D5B;
+  --rest:#8E8E8E; --bio:#8B5A33; --papier:#5FAE93; --gelb:#F2D200; --schadstoff:#D7262E; --gruen:#00936E; --baum:#1F5FA0;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:17px;line-height:1.4}
+button{font:inherit;color:inherit}
+.hidden{display:none!important}
+header{background:var(--brand);color:var(--brand-ink);padding:18px 18px 16px}
+header .city{font-size:13px;letter-spacing:.08em;text-transform:uppercase;opacity:.8}
+header .street{font-size:21px;font-weight:700;margin-top:2px;display:flex;align-items:center;gap:8px}
+header .street small{font-weight:400;font-size:14px;opacity:.85;display:block}
+main{padding:14px 14px 96px;max-width:560px;margin:0 auto}
+.card{background:var(--card);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+h2{font-size:15px;font-weight:600;color:var(--muted);margin:18px 4px 8px;text-transform:uppercase;letter-spacing:.05em}
+.next .when{font-size:30px;font-weight:800;line-height:1.1}
+.next .date{color:var(--muted);margin:4px 0 12px}
+.next .hint{margin-top:12px;padding:10px 12px;border-radius:10px;background:#FFF4D6;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 12px 7px 8px;border-radius:999px;background:#F1EFE9;font-weight:600;font-size:16px}
+.dot{width:18px;height:18px;border-radius:50%;flex:none;border:1px solid rgba(0,0,0,.12)}
+.list .row{display:flex;gap:14px;padding:12px 0;border-top:1px solid var(--line);align-items:flex-start}
+.list .row:first-child{border-top:none;padding-top:2px}
+.list .d{width:62px;flex:none;text-align:center}
+.list .d b{display:block;font-size:24px;line-height:1}
+.list .d span{font-size:13px;color:var(--muted)}
+.list .what{flex:1;display:flex;flex-direction:column;gap:6px}
+.list .what .rel{font-size:13px;color:var(--muted)}
+.type{display:flex;align-items:center;gap:10px;font-weight:600}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;border:0;padding:10px 0 12px;font-size:13px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button svg{width:24px;height:24px}
+nav button.on{color:var(--brand);font-weight:700}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:14px;font-weight:700;background:var(--brand);color:#fff;font-size:17px}
+.btn.sec{background:#E9E6DE;color:var(--ink)}
+.btn+.btn{margin-top:10px}
+input[type=search],input[type=time]{width:100%;font:inherit;font-size:18px;padding:14px;border-radius:12px;border:1.5px solid var(--line);background:#fff;color:var(--ink)}
+input:focus{outline:none;border-color:var(--brand)}
+.streets{margin-top:10px}
+.streets button{display:block;width:100%;text-align:left;background:var(--card);border:0;border-bottom:1px solid var(--line);padding:14px 12px}
+.streets button small{display:block;color:var(--muted);font-size:14px}
+.streets button:first-child{border-radius:12px 12px 0 0}
+.streets button:last-child{border-radius:0 0 12px 12px;border-bottom:0}
+.streets button:only-child{border-radius:12px}
+.intro h1{font-size:26px;margin:6px 0 6px}
+.intro p{color:var(--muted);margin:0 0 14px}
+.setrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.setrow:first-of-type{border-top:0}
+.setrow .type{font-weight:500}
+.sw{position:relative;width:52px;height:30px;flex:none}
+.sw input{opacity:0;width:0;height:0}
+.sw span{position:absolute;inset:0;background:#CFCBC0;border-radius:30px;transition:.2s}
+.sw span:before{content:"";position:absolute;width:24px;height:24px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.sw input:checked+span{background:var(--ok)}
+.sw input:checked+span:before{transform:translateX(22px)}
+.warn{background:#FCE9E0;color:#7A2E10}
+.warn b{display:block;margin-bottom:4px}
+.note{font-size:14px;color:var(--muted)}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cal-head b{font-size:20px}
+.cal-head button{background:#EFEDE6;border:0;border-radius:10px;width:44px;height:40px;font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.grid .wd{text-align:center;font-size:12px;color:var(--muted);padding-bottom:2px}
+.grid .c{min-height:54px;border-radius:9px;background:#F7F6F2;padding:4px 2px;text-align:center;font-size:15px;border:0}
+.grid .c.out{background:transparent}
+.grid .c.today{outline:2px solid var(--brand)}
+.grid .c.hol{color:var(--warn)}
+.grid .dots{display:flex;flex-wrap:wrap;justify-content:center;gap:2px;margin-top:4px}
+.grid .dots i{width:10px;height:10px;border-radius:50%;border:1px solid rgba(0,0,0,.12)}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;font-size:14px}
+.legend div{display:flex;gap:8px;align-items:center}
+.dayinfo{margin-top:12px;min-height:24px}
+.info p{margin:4px 0}
+.info a{color:var(--brand);font-weight:600;text-decoration:none}
+.empty{text-align:center;color:var(--muted);padding:12px}
+</style>
+</head>
+<body>
+
+<!-- Ersteinrichtung -->
+<section id="setup" class="hidden">
+  <header><div class="city">Abfallkalender Heusenstamm</div></header>
+  <main>
+    <div class="intro">
+      <h1 id="setupTitle">Wo wohnen Sie?</h1>
+      <p>Geben Sie Ihre Straße ein. Die App zeigt Ihnen dann alle Abholtermine und erinnert Sie am Vorabend.</p>
+    </div>
+    <input id="q" type="search" placeholder="Straße suchen, z. B. Ahornweg" autocomplete="off">
+    <div id="streets" class="streets"></div>
+    <button id="setupCancel" class="btn sec hidden" style="margin-top:14px">Abbrechen</button>
+  </main>
+</section>
+
+<!-- Hauptansicht -->
+<section id="app" class="hidden">
+  <header>
+    <div class="city">Abfallkalender Heusenstamm</div>
+    <div class="street" id="hStreet"></div>
+  </header>
+  <main>
+    <div id="permWarn" class="card warn hidden">
+      <b>Benachrichtigungen sind ausgeschaltet</b>
+      Ohne Erlaubnis kann die App Sie nicht erinnern.
+      <button class="btn" style="margin-top:10px" onclick="askNotify()">Benachrichtigungen erlauben</button>
+    </div>
+
+    <div id="tabTermine">
+      <div id="nextCard" class="card next"></div>
+      <h2>Kommende Termine</h2>
+      <div id="upcoming" class="card list"></div>
+    </div>
+
+    <div id="tabKalender" class="hidden">
+      <div class="card">
+        <div class="cal-head">
+          <button onclick="moveMonth(-1)" aria-label="Vorheriger Monat">‹</button>
+          <b id="calTitle"></b>
+          <button onclick="moveMonth(1)" aria-label="Nächster Monat">›</button>
+        </div>
+        <div id="grid" class="grid"></div>
+        <div id="dayInfo" class="dayinfo note">Tippen Sie auf einen Tag für Details.</div>
+        <div id="legend" class="legend"></div>
+      </div>
+    </div>
+
+    <div id="tabEinst" class="hidden">
+      <h2>Erinnerung</h2>
+      <div class="card">
+        <div class="setrow">
+          <div>Am Vorabend um</div>
+          <input id="time" type="time" style="width:130px">
+        </div>
+        <p class="note" style="margin:6px 0 0">Sie bekommen am Tag vor der Abholung zu dieser Uhrzeit eine Nachricht.</p>
+      </div>
+      <h2>Woran erinnern?</h2>
+      <div class="card" id="typeToggles"></div>
+      <div id="exactWarn" class="card warn hidden">
+        <b>Genaue Uhrzeit nicht erlaubt</b>
+        Die Erinnerung kann sich um einige Minuten verspäten. Für pünktliche Erinnerungen erlauben Sie „Wecker &amp; Erinnerungen“.
+        <button class="btn" style="margin-top:10px" onclick="AndroidCall('openExactAlarmSettings')">Einstellung öffnen</button>
+      </div>
+      <button class="btn" onclick="testNotify()">Test-Benachrichtigung senden</button>
+      <button class="btn sec" onclick="showSetup(true)">Straße ändern</button>
+      <h2>Wertstoffhof</h2>
+      <div class="card info">
+        <p><b>Am Zwerggewann 6–8</b></p>
+        <p>Mo 12:00–15:30 · Di–Mi 7:30–15:30<br>Do 12:00–17:00 · Fr 7:30–11:30<br>Sa 9:00–13:00</p>
+        <p class="note">Geschlossen am 04.04.2026 und 02.05.2026.</p>
+      </div>
+      <h2>Grünschnitt-Annahme</h2>
+      <div class="card info">
+        <p><b>Rembrücker Straße</b> (hinter Fa. Braas)</p>
+        <p>Di 15:00–18:00 · Fr 14:00–17:00 · Sa 9:00–13:00</p>
+        <p class="note">Geöffnet vom 10.02.2026 bis 12.12.2026.</p>
+      </div>
+      <h2>Fragen zu Terminen</h2>
+      <div class="card info">
+        <p>Stadt Heusenstamm (FD Steuern)<br><a href="tel:061046071222">06104 607-1222</a></p>
+        <p>ESO (Rest-, Bio-, Papier, Grünschnitt, Weihnachtsbäume)<br><a href="tel:069840004311">069 840004-311</a></p>
+        <p>Remondis (Gelbe Säcke)<br><a href="tel:08001223255">0800 1223255</a></p>
+      </div>
+      <p class="note" style="padding:0 4px">Daten: Abfallkalender 2026 der Stadt Heusenstamm. Ohne Gewähr – bei Abweichungen gilt der offizielle Kalender. <span id="appVer"></span></p>
+    </div>
+  </main>
+  <nav>
+    <button data-tab="Termine" class="on" onclick="tab('Termine')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Termine</button>
+    <button data-tab="Kalender" onclick="tab('Kalender')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Kalender</button>
+    <button data-tab="Einst" onclick="tab('Einst')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Einstellungen</button>
+  </nav>
+</section>
+
+<script>
+// ---------- Bridge (Android oder Browser-Test) ----------
+const A = window.Android || null;
+function AndroidCall(fn, ...args){ try{ if(A && A[fn]) return A[fn](...args); }catch(e){} return null; }
+
+const TYPES = {
+  rest:       {name:"Restabfall",       short:"Restmüll",   color:"var(--rest)"},
+  bio:        {name:"Bioabfall",        short:"Biotonne",   color:"var(--bio)"},
+  papier:     {name:"Altpapier",        short:"Papier",     color:"var(--papier)"},
+  gelb:       {name:"Gelber Sack",      short:"Gelber Sack",color:"var(--gelb)"},
+  schadstoff: {name:"Schadstoffsammlung", short:"Schadstoffe", color:"var(--schadstoff)"},
+  gruen:      {name:"Grünschnitt",      short:"Grünschnitt",color:"var(--gruen)"},
+  baum:       {name:"Weihnachtsbäume",  short:"Weihnachtsbaum", color:"var(--baum)"},
+};
+const ORDER = ["rest","bio","papier","gelb","gruen","baum","schadstoff"];
+const DEFAULT_TYPES = {rest:true,bio:true,papier:true,gelb:true,gruen:false,baum:true,schadstoff:false};
+const HOLIDAYS = {"2026-01-01":"Neujahr","2026-04-03":"Karfreitag","2026-04-05":"Ostersonntag","2026-04-06":"Ostermontag","2026-05-01":"Tag der Arbeit","2026-05-14":"Christi Himmelfahrt","2026-05-24":"Pfingstsonntag","2026-05-25":"Pfingstmontag","2026-06-04":"Fronleichnam","2026-10-03":"Tag der Deutschen Einheit","2026-12-25":"1. Weihnachtstag","2026-12-26":"2. Weihnachtstag"};
+const MONTHS = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+const WD = ["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+const WDS = ["So","Mo","Di","Mi","Do","Fr","Sa"];
+
+let DATA = null, S = null, viewMonth = null, currentTab = "Termine", setupFromApp = false;
+
+function loadData(){
+  const raw = AndroidCall("getData");
+  if (raw) return Promise.resolve(JSON.parse(raw));
+  return fetch("data.json").then(r => r.json());
+}
+function loadSettings(){
+  let raw = AndroidCall("getSettings");
+  if (raw === null) { try{ raw = localStorage.getItem("abfall-settings"); }catch(e){} }
+  let s = {};
+  try{ s = raw ? JSON.parse(raw) : {}; }catch(e){}
+  s.time = s.time || "18:00";
+  s.types = Object.assign({}, DEFAULT_TYPES, s.types || {});
+  return s;
+}
+function saveSettings(){
+  const json = JSON.stringify(S);
+  if (A && A.saveSettings) A.saveSettings(json);
+  else { try{ localStorage.setItem("abfall-settings", json); }catch(e){} }
+}
+
+// ---------- Termine berechnen ----------
+function iso(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function parseIso(s){ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); }
+function zonesFor(year, streetName){
+  const y = DATA.jahre[year]; if(!y) return null;
+  const st = y.strassen.find(s => s[0] === streetName); if(!st) return null;
+  return {bio:String(st[1]), rest:String(st[2]), gelb:st[3]};
+}
+// alle Termine der Straße: Map isoDate -> [types]
+function allDates(streetName){
+  const out = {};
+  for (const year of Object.keys(DATA.jahre)) {
+    const z = zonesFor(year, streetName); if(!z) continue;
+    const t = DATA.jahre[year].termine;
+    const key = {rest:z.rest, papier:z.rest, bio:z.bio, baum:z.bio, gelb:z.gelb, schadstoff:"alle", gruen:"alle"};
+    for (const type of ORDER) {
+      const list = (t[type] && t[type][key[type]]) || [];
+      for (const d of list) (out[d] = out[d] || []).push(type);
+    }
+  }
+  return out;
+}
+function streetParts(name){
+  const m = name.match(/^(.*?)\s+((?:vom|von|OST|WEST)\b.*)$/);
+  return m ? {main:m[1], sub:m[2]} : {main:name, sub:""};
+}
+
+// ---------- Ersteinrichtung ----------
+function showSetup(fromApp){
+  setupFromApp = !!fromApp;
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("setup").classList.remove("hidden");
+  document.getElementById("setupCancel").classList.toggle("hidden", !setupFromApp);
+  document.getElementById("setupTitle").textContent = setupFromApp ? "Neue Straße wählen" : "Wo wohnen Sie?";
+  const q = document.getElementById("q"); q.value = ""; renderStreets("");
+  window.scrollTo(0,0);
+}
+function norm(s){ return s.toLowerCase().replace(/ß/g,"ss").replace(/str\.?(\s|$)/g,"strasse$1").replace(/[äöü]/g,c=>({ä:"a",ö:"o",ü:"u"}[c])).replace(/[^a-z0-9]/g,""); }
+function currentStreets(){
+  const years = Object.keys(DATA.jahre).sort();
+  const names = new Set();
+  for (const y of years) DATA.jahre[y].strassen.forEach(s => names.add(s[0]));
+  return [...names].sort((a,b)=>a.localeCompare(b,"de"));
+}
+function renderStreets(q){
+  const box = document.getElementById("streets");
+  const nq = norm(q);
+  const list = currentStreets().filter(n => !nq || norm(n).includes(nq) || norm(streetParts(n).main).includes(nq));
+  box.innerHTML = "";
+  if (!list.length) { box.innerHTML = '<div class="empty">Keine Straße gefunden. Bitte anders schreiben.</div>'; return; }
+  for (const n of list) {
+    const p = streetParts(n);
+    const b = document.createElement("button");
+    b.innerHTML = esc(p.main) + (p.sub ? "<small>Abschnitt: " + esc(p.sub) + "</small>" : "");
+    b.onclick = () => chooseStreet(n);
+    box.appendChild(b);
+  }
+}
+function chooseStreet(n){
+  S.street = n; saveSettings();
+  if (!setupFromApp) askNotify();
+  showApp();
+}
+document.getElementById("q").addEventListener("input", e => renderStreets(e.target.value));
+document.getElementById("setupCancel").onclick = () => showApp();
+
+// ---------- Hauptansicht ----------
+function showApp(){
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  const p = streetParts(S.street);
+  document.getElementById("hStreet").innerHTML = "<div>" + esc(p.main) + (p.sub ? "<small>" + esc(p.sub) + "</small>" : "") + "</div>";
+  renderAll();
+}
+function renderAll(){ renderPerm(); renderTermine(); renderKalender(); renderEinst(); }
+
+function relDays(dIso){
+  const t = new Date(); t.setHours(0,0,0,0);
+  return Math.round((parseIso(dIso) - t) / 86400000);
+}
+function relText(n){ return n===0?"Heute":n===1?"Morgen":n===2?"Übermorgen":"in "+n+" Tagen"; }
+function fmtDate(dIso, long){
+  const d = parseIso(dIso);
+  return (long?WD[d.getDay()]:WDS[d.getDay()]) + ", " + d.getDate() + ". " + MONTHS[d.getMonth()] + (long?" "+d.getFullYear():"");
+}
+function chip(type){ return '<span class="chip"><span class="dot" style="background:'+TYPES[type].color+'"></span>'+TYPES[type].name+'</span>'; }
+
+function renderTermine(){
+  const all = allDates(S.street);
+  const today = iso(new Date());
+  const days = Object.keys(all).filter(d => d >= today).sort();
+  const nc = document.getElementById("nextCard"), up = document.getElementById("upcoming");
+  if (!days.length) {
+    nc.innerHTML = '<div class="when" style="font-size:22px">Keine weiteren Termine</div><p class="date">Der Kalender für das neue Jahr ist noch nicht in der App. Bitte installieren Sie die neueste Version, sobald die Stadt den neuen Kalender veröffentlicht.</p>';
+    up.innerHTML = '<div class="empty">—</div>'; return;
+  }
+  const first = days[0], n = relDays(first);
+  let hint = "";
+  if (n === 1) hint = '<div class="hint">Bitte heute Abend an die Straße stellen.</div>';
+  if (n === 0) hint = '<div class="hint">Abholung ist heute.</div>';
+  nc.innerHTML = '<div class="note">Nächste Abholung</div><div class="when">'+relText(n)+'</div><div class="date">'+fmtDate(first,true)+'</div><div class="chips">'+all[first].map(chip).join("")+'</div>'+hint;
+  up.innerHTML = days.slice(1, 13).map(d => {
+    const dt = parseIso(d);
+    return '<div class="row"><div class="d"><b>'+dt.getDate()+'</b><span>'+WDS[dt.getDay()]+' · '+MONTHS[dt.getMonth()].slice(0,3)+'</span></div><div class="what">'+
+      all[d].map(t=>'<div class="type"><span class="dot" style="background:'+TYPES[t].color+'"></span>'+TYPES[t].name+'</div>').join("")+
+      '<div class="rel">'+relText(relDays(d))+'</div></div></div>';
+  }).join("") || '<div class="empty">Keine weiteren Termine im Kalender.</div>';
+}
+
+function renderKalender(){
+  const all = allDates(S.street);
+  if (!viewMonth) { const t = new Date(); viewMonth = new Date(t.getFullYear(), t.getMonth(), 1); }
+  const y = viewMonth.getFullYear(), m = viewMonth.getMonth();
+  document.getElementById("calTitle").textContent = MONTHS[m] + " " + y;
+  const g = document.getElementById("grid");
+  let h = ["Mo","Di","Mi","Do","Fr","Sa","So"].map(d=>'<div class="wd">'+d+'</div>').join("");
+  const lead = (new Date(y,m,1).getDay()+6)%7, dim = new Date(y,m+1,0).getDate(), today = iso(new Date());
+  for (let i=0;i<lead;i++) h += '<div class="c out"></div>';
+  for (let d=1; d<=dim; d++){
+    const key = iso(new Date(y,m,d)), types = all[key] || [];
+    h += '<button class="c'+(key===today?' today':'')+(HOLIDAYS[key]?' hol':'')+'" onclick="dayInfo(\''+key+'\')">'+d+
+      '<div class="dots">'+types.map(t=>'<i style="background:'+TYPES[t].color+'"></i>').join("")+'</div></button>';
+  }
+  g.innerHTML = h;
+  document.getElementById("legend").innerHTML = ORDER.map(t=>'<div><span class="dot" style="background:'+TYPES[t].color+'"></span>'+TYPES[t].name+'</div>').join("");
+}
+function dayInfo(key){
+  const all = allDates(S.street), types = all[key] || [];
+  let h = '<b>'+fmtDate(key,true)+'</b>' + (HOLIDAYS[key] ? ' · '+HOLIDAYS[key] : '') + '<br>';
+  h += types.length ? types.map(t=>TYPES[t].name).join(", ") : "Keine Abholung";
+  const el = document.getElementById("dayInfo"); el.innerHTML = h; el.classList.remove("note");
+}
+function moveMonth(k){ viewMonth = new Date(viewMonth.getFullYear(), viewMonth.getMonth()+k, 1); renderKalender(); document.getElementById("dayInfo").innerHTML = ""; }
+
+function renderEinst(){
+  document.getElementById("time").value = S.time;
+  document.getElementById("typeToggles").innerHTML = ORDER.map(t =>
+    '<label class="setrow"><span class="type"><span class="dot" style="background:'+TYPES[t].color+'"></span>'+TYPES[t].name+'</span>'+
+    '<span class="sw"><input type="checkbox" data-type="'+t+'"'+(S.types[t]?' checked':'')+'><span></span></span></label>'
+  ).join("");
+  document.querySelectorAll("#typeToggles input").forEach(cb => cb.onchange = () => { S.types[cb.dataset.type] = cb.checked; saveSettings(); });
+  const v = AndroidCall("appVersion"); document.getElementById("appVer").textContent = v ? "Version " + v : "";
+  const exact = AndroidCall("canExactAlarm");
+  document.getElementById("exactWarn").classList.toggle("hidden", exact !== false);
+}
+document.getElementById("time").addEventListener("change", e => { if (e.target.value) { S.time = e.target.value; saveSettings(); } });
+
+function renderPerm(){
+  const ok = AndroidCall("notificationsAllowed");
+  document.getElementById("permWarn").classList.toggle("hidden", ok !== false);
+}
+function askNotify(){ AndroidCall("requestNotifications"); }
+function testNotify(){
+  const all = allDates(S.street), today = iso(new Date());
+  const next = Object.keys(all).filter(d => d > today).sort()[0];
+  const text = next ? (all[next].map(t=>TYPES[t].name).join(", ") + " – " + fmtDate(next,true)) : "Test";
+  if (A && A.testNotification) A.testNotification("Test: Morgen wird abgeholt", text);
+  else alert("Test: " + text);
+}
+// vom Android-Code aufgerufen, z. B. nach Erlaubnis-Dialog oder Rückkehr in die App
+window.onResume = function(){ if (S && S.street) { renderPerm(); renderEinst(); renderTermine(); } };
+
+function tab(name){
+  currentTab = name;
+  for (const t of ["Termine","Kalender","Einst"]) document.getElementById("tab"+t).classList.toggle("hidden", t!==name);
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b.dataset.tab===name));
+  if (name === "Kalender") { viewMonth = null; renderKalender(); }
+  window.scrollTo(0,0);
+}
+// Zurück-Taste: true = in der App bleiben
+window.goBack = function(){
+  if (!document.getElementById("setup").classList.contains("hidden") && setupFromApp) { showApp(); return true; }
+  if (!document.getElementById("app").classList.contains("hidden") && currentTab !== "Termine") { tab("Termine"); return true; }
+  return false;
+};
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+loadData().then(d => {
+  DATA = d; S = loadSettings();
+  if (S.street && currentStreets().includes(S.street)) showApp(); else showSetup(false);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+name: APK bauen
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: "8.9"
+      - name: Build
+        run: gradle :app:assembleRelease --no-daemon
+      - name: APK umbenennen
+        run: cp app/build/outputs/apk/release/app-release.apk AbfallHeusenstamm.apk
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Abfall Heusenstamm 1.${{ github.run_number }}
+          files: AbfallHeusenstamm.apk
+          make_latest: true
